@@ -19,19 +19,20 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const data = req.body.order;
         const { value, error } = Order_validation_schema_1.default.validate(data);
-        if (error) {
-            res.status(400).json({
-                success: false,
-                message: error.message,
-                data: error
-            });
-        }
-        else {
+        const afterChecking = yield Order_service_1.OrderService.productValidation(value.productId);
+        if (afterChecking) {
             const result = yield Order_service_1.OrderService.orderCreateDB(value);
             res.status(200).json({
                 success: true,
                 message: "Order created successfully",
-                data: result
+                data: result,
+            });
+        }
+        else {
+            res.status(400).json({
+                success: false,
+                messege: "Product not found",
+                data: error,
             });
         }
     }
@@ -39,17 +40,36 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         console.log(error);
     }
 });
+// get all orders or get orders by email
 const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const result = yield Order_service_1.OrderService.getOrderFromDB();
-        res.status(200).json({
-            success: true,
-            message: "Order fetched successfully",
-            data: result
-        });
+    const email = req.query.email;
+    const getOrderByEmail = yield Order_service_1.OrderService.getOrderInfoByEmail(email);
+    const getAllOrders = yield Order_service_1.OrderService.getOrderFromDB();
+    if (email) {
+        console.log("this is getOrderByEmail", getOrderByEmail);
+        try {
+            res.status(400).json({
+                success: true,
+                message: "Order by email fetched successfully",
+                data: getOrderByEmail,
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+        // ....
     }
-    catch (error) {
-        console.log(error);
+    else {
+        try {
+            res.status(400).json({
+                success: true,
+                message: "Order fetched successfully",
+                data: getAllOrders,
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 });
 exports.OrderController = {

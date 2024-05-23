@@ -18,7 +18,7 @@ const mongoose = require("mongoose");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield mongoose.connect("mongodb+srv://john:123@todays-date.r1b2kle.mongodb.net/Products?retryWrites=true&w=majority&appName=todays-date");
+            yield mongoose.connect("mongodb+srv://john:123@todays-date.r1b2kle.mongodb.net/E-Commerce-Management?retryWrites=true&w=majority&appName=todays-date");
             console.log("connected successfully to MongoDB");
         }
         catch (error) {

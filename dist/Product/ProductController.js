@@ -40,10 +40,11 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const search = req.query;
-        const { serchTerm } = search;
-        console.log(serchTerm);
-        if (serchTerm) {
-            const result = yield Product_service_1.ProductService.getbySearchInDB(serchTerm);
+        // console.log("inside and getProduct search",search);
+        const { searchTerm } = search;
+        // console.log("inside and getProduct searchTerm",searchTerm);
+        if (searchTerm) {
+            const result = yield Product_service_1.ProductService.getbySearchInDB(search.searchTerm);
             res.status(200).json({
                 sucess: true,
                 message: "Product fetched successfully",
@@ -64,15 +65,25 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 const getSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log("inside getSingleProduct");
     try {
-        const { id } = req.params;
-        console.log(id);
-        const result = yield Product_service_1.ProductService.getProductById(id);
-        res.status(200).json({
-            sucess: true,
-            message: "Single Product fetched successfully",
-            data: result,
-        });
+        const { productsId } = req.params;
+        // console.log("something", productsId);
+        const result = yield Product_service_1.ProductService.getProductById(productsId);
+        if (result) {
+            res.status(200).json({
+                sucess: true,
+                message: "Single Product fetched successfully",
+                data: result,
+            });
+        }
+        else {
+            res.status(200).json({
+                sucess: false,
+                message: "Product not found",
+                data: result,
+            });
+        }
     }
     catch (error) {
         console.log(error);
@@ -80,11 +91,30 @@ const getSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const result = yield Product_service_1.ProductService.deleteProductFromDB(id);
+        const { productsId } = req.params;
+        // console.log("this is req.param",req.params);
+        const result = yield Product_service_1.ProductService.deleteProductFromDB(productsId);
         res.status(200).json({
             sucess: true,
             message: "Product deleted successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { productsId } = req.params;
+        // console.log(id);
+        const data = req.body;
+        // console.log(data);
+        const result = yield Product_service_1.ProductService.updateProductInDB(productsId, data);
+        console.log(productsId);
+        res.status(200).json({
+            sucess: true,
+            message: "Product updated successfully",
             data: result,
         });
     }
@@ -97,4 +127,5 @@ exports.ProductController = {
     getProduct,
     getSingleProduct,
     deleteProduct,
+    updateProduct,
 };

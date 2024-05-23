@@ -7,17 +7,18 @@ const createOrder = async (req: Request, res: Response) => {
     const data = req.body.order;
     const { value, error } = orderValidationSchema.validate(data);
     const afterChecking = await OrderService.productValidation(value.productId);
-    if (afterChecking) {
+    const inventoryCheck = await OrderService.InventoryCheck(value.productId,value.quantity)
+    if (inventoryCheck) {
       const result = await OrderService.orderCreateDB(value);
       res.status(200).json({
         success: true,
-        message: "Order created successfully",
-        data: result,
+        message: "Order created successfully great",
+        data: inventoryCheck,
       });
     } else {
       res.status(400).json({
         success: false,
-        messege: "Product not found",
+        messege: "Product not found please check your order",
         data: error,
       });
     }

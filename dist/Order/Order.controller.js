@@ -20,18 +20,19 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const data = req.body.order;
         const { value, error } = Order_validation_schema_1.default.validate(data);
         const afterChecking = yield Order_service_1.OrderService.productValidation(value.productId);
-        if (afterChecking) {
+        const inventoryCheck = yield Order_service_1.OrderService.InventoryCheck(value.productId, value.quantity);
+        if (inventoryCheck) {
             const result = yield Order_service_1.OrderService.orderCreateDB(value);
             res.status(200).json({
                 success: true,
-                message: "Order created successfully",
-                data: result,
+                message: "Order created successfully great",
+                data: inventoryCheck,
             });
         }
         else {
             res.status(400).json({
                 success: false,
-                messege: "Product not found",
+                messege: "Product not found please check your order",
                 data: error,
             });
         }

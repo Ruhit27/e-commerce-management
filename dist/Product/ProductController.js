@@ -35,7 +35,11 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
     }
-    catch (error) { }
+    catch (error) {
+        res.status(500).json({
+            messege: error
+        });
+    }
 });
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -1,3 +1,4 @@
+import { error } from "console";
 import { Tproduct } from "../Product/Product.interface";
 import { ProductModel } from "../Product/Product.model";
 import { Torder } from "./Order.interface";
@@ -13,26 +14,27 @@ const productValidation = async (productId: string) => {
   return productFound;
 };
 
-
-
-
-const InventoryCheck = async (productId: string) => {
+const InventoryCheck = async (productId: string, orderQuantity: number) => {
   const productFound: any = await ProductModel.findOne({ _id: productId });
-  const orderFound = await OrderModel.findOne({ productId: productId });
-  let inventory = productFound.inventory.quantity;
-  let inStock = productFound.inventory.inStock;
-  if (inStock) {
-    inventory = inventory - 1;
-    console.log("this is result", productFound.inventory.quantity);
-    const updatedProduct = await productFound.save();
+    // console.log("Product purchasing",productFound);
+  let productQuantity = productFound.inventory.quantity;
+//   console.log(productQuantity);
+//   console.log(productFound);
+  //   console.log("Order data",orderQuantity);
+  
 
-    return updatedProduct;
-  }
-  else{
-    console.log('Product is not in stock');
-    return false;
+  const remaingQuantity = productQuantity - orderQuantity;
+    // console.log("remaining quantity",remaingQuantity);
+
+  if (remaingQuantity >= 0) {
+    const updateProduct = await  ProductModel.findOneAndUpdate({_id: productId},{inventory:{quantity: remaingQuantity}});
+    return updateProduct;
+  } else {
+    return error;
   }
 };
+
+//
 
 const getOrderFromDB = async () => {
   const result = await OrderModel.find();
@@ -49,5 +51,5 @@ export const OrderService = {
   getOrderFromDB,
   productValidation,
   getOrderInfoByEmail,
-  InventoryCheck
+  InventoryCheck,
 };

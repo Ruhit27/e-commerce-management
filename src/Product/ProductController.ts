@@ -20,7 +20,11 @@ const createProduct = async (req: Request, res: Response) => {
         data: result,
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({
+      messege:error
+    })
+  }
 };
 
 const getProduct = async (req: Request, res: Response) => {
